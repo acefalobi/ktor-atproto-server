@@ -7,6 +7,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.statuspages.*
 import social.aceinpink.exception.ResponseError
@@ -51,6 +52,11 @@ fun Application.module() {
             setDateFormat(DateFormat.FULL)
             setPrettyPrinting()
         }
+    }
+    install(CORS) {
+        anyHost()
+        allowHeader(HttpHeaders.ContentType)
+        allowHeaders { true }
     }
     install(DefaultHeaders)
     configureSecurity()
