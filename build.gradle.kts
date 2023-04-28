@@ -1,4 +1,6 @@
+val jbcrypt_version: String by project
 val ktor_version: String by project
+val kmongo_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 
@@ -23,6 +25,7 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
@@ -30,6 +33,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
+    implementation("org.mindrot:jbcrypt:$jbcrypt_version")
+    implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

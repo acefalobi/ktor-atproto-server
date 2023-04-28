@@ -104,5 +104,5 @@ enum class ResponseError(val defaultMessage: String = "") {
     /**
      * An unknown error was thrown.
      */
-    UnknownError,
+    UnknownError("An unknown error occured."),
 }

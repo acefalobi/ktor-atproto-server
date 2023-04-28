@@ -9,7 +9,7 @@ import social.aceinpink.exception.ResponseException
 import social.aceinpink.service.XRPCService
 import social.aceinpink.util.getAndValidate
 import social.aceinpink.util.getNullable
-import social.aceinpink.util.getUserId
+import social.aceinpink.util.getAccountIdentifier
 import social.aceinpink.util.ok
 
 private val xrpcService = XRPCService
@@ -53,44 +53,44 @@ fun Routing.xrpcRoute() {
             call.ok(xrpcService.resetPassword(token, password))
         }
 
-        authenticate("xrpc") {
+        authenticate("xrpc-jwt") {
             post("/com.atproto.server.createAppPassword") {
                 val params = call.receive<Map<String, Any>>()
                 val appName = params.getAndValidate<String>("name")
-                call.ok(xrpcService.createAppPassword(appName, call.getUserId()))
+                call.ok(xrpcService.createAppPassword(appName, call.getAccountIdentifier()))
             }
             post("/com.atproto.server.createInviteCode") {
                 val params = call.receive<Map<String, Any>>()
                 val useCount = params.getAndValidate<Double>("useCount").toInt()
-                call.ok(xrpcService.createInviteCode(useCount, call.getUserId()))
+                call.ok(xrpcService.createInviteCode(useCount, call.getAccountIdentifier()))
             }
             post("/com.atproto.server.createInviteCodes") {
-                xrpcService.createInviteCodes(-1, -1, call.getUserId())
+                xrpcService.createInviteCodes(-1, -1, call.getAccountIdentifier())
             }
             post("/com.atproto.server.deleteSession") {
-                call.ok(xrpcService.deleteSession(call.getUserId()))
+                call.ok(xrpcService.deleteSession(call.getAccountIdentifier()))
             }
             get("/com.atproto.server.getAccountInviteCodes") {
                 val includeUsed = call.parameters["includeUsed"]?.toBoolean() ?: true
                 val createAvailable = call.parameters["createAvailable"]?.toBoolean() ?: true
-                call.ok(xrpcService.getAccountInviteCodes(includeUsed, createAvailable, call.getUserId()))
+                call.ok(xrpcService.getAccountInviteCodes(includeUsed, createAvailable, call.getAccountIdentifier()))
             }
             get("/com.atproto.server.getSession") {
-                call.ok(xrpcService.getSession(call.getUserId()))
+                call.ok(xrpcService.getSession(call.getAccountIdentifier()))
             }
             get("/com.atproto.server.listAppPasswords") {
-                call.ok(xrpcService.listAppPasswords(call.getUserId()))
+                call.ok(xrpcService.listAppPasswords(call.getAccountIdentifier()))
             }
             post("/com.atproto.server.refreshSession") {
-                call.ok(xrpcService.refreshSession(call.getUserId()))
+                call.ok(xrpcService.refreshSession(call.getAccountIdentifier()))
             }
             post("/com.atproto.server.requestAccountDelete") {
-                call.ok(xrpcService.requestAccountDelete(call.getUserId()))
+                call.ok(xrpcService.requestAccountDelete(call.getAccountIdentifier()))
             }
             post("/com.atproto.server.revokeAppPassword") {
                 val params = call.receive<Map<String, Any>>()
                 val appName = params.getAndValidate<String>("name")
-                call.ok(xrpcService.revokeAppPassword(appName, call.getUserId()))
+                call.ok(xrpcService.revokeAppPassword(appName, call.getAccountIdentifier()))
             }
         }
 

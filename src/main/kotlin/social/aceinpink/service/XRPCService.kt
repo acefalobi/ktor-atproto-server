@@ -1,5 +1,8 @@
 package social.aceinpink.service
 
+import org.mindrot.jbcrypt.BCrypt
+import social.aceinpink.data.entity.Account
+import social.aceinpink.data.repository.AccountRepository
 import social.aceinpink.exception.ResponseError
 import social.aceinpink.exception.ResponseException
 import social.aceinpink.model.AppPassword
@@ -8,24 +11,55 @@ import social.aceinpink.model.InviteCodes
 import social.aceinpink.model.ServerDescription
 import social.aceinpink.model.Session
 import social.aceinpink.model.SessionInfo
+import social.aceinpink.util.isValidEmail
+import social.aceinpink.util.isValidHandle
 import java.util.Date
 
 object XRPCService {
+
+    private val accountRepository = AccountRepository
+    private val securityService = SecurityService
 
     /**
      * Create an account.
      *
      * See https://atproto.com/lexicons/com-atproto-server#comatprotoservercreateaccount
      */
-    fun createAccount(
+    suspend fun createAccount(
         email: String,
         handle: String,
         password: String,
         inviteCode: String? = null,
         recoveryKey: String? = null,
     ): Session {
-        // TODO: Create new user entry according to ATProto specs and create session for the user.
-        return Session("", "", "", "", "")
+        if (email.isEmpty() || handle.isEmpty() || password.isEmpty()) {
+            throw ResponseException(ResponseError.InvalidRequest, "Please fill in the required fields.")
+        }
+        if (!email.isValidEmail()) {
+            throw ResponseException(ResponseError.InvalidRequest, "Invalid email was provided.")
+        }
+        if (!handle.isValidHandle()) {
+            throw ResponseException(ResponseError.InvalidHandle, "Invalid handle was provided")
+        }
+        if (password.length < 6) {
+            throw ResponseException(ResponseError.InvalidRequest, "Password is too short.")
+        }
+        if (accountRepository.findAccountByEmail(email) != null) {
+            throw ResponseException(ResponseError.InvalidRequest, "This email is already in use. Please sign in.")
+        }
+        if (accountRepository.findAccountByHandle(handle) != null) {
+            throw ResponseException(ResponseError.HandleNotAvailable, "Sorry, this handle is already in use.")
+        }
+
+        val passwordHash = BCrypt.hashpw(password, BCrypt.gensalt())
+
+        val did = "did@$handle" // TODO: Create new did profile for user
+        val accountToCreate = Account(email, handle, /* Generate DID */ did, passwordHash)
+        val createdAccount = accountRepository.createAccount(accountToCreate)
+
+        val jwt = securityService.createJWT(createdAccount.did)
+
+        return Session(jwt, jwt, createdAccount.handle, createdAccount.did, createdAccount.email)
     }
 
     /**
@@ -62,9 +96,21 @@ object XRPCService {
      *
      * See https://atproto.com/lexicons/com-atproto-server#comatprotoservercreatesession
      */
-    fun createSession(identifier: String, password: String): Session {
-        // TODO: Validate the identifier and create a session for the user if valid.
-        return Session("", "", "", "", "")
+    suspend fun createSession(identifier: String, password: String): Session {
+        if (identifier.isEmpty() || password.isEmpty() || password.isEmpty()) {
+            throw ResponseException(ResponseError.InvalidRequest, "Please fill in the required fields.")
+        }
+        val possibleAccount = accountRepository.findAccountByDid(identifier)
+            ?: accountRepository.findAccountByEmail(identifier)
+            ?: accountRepository.findAccountByHandle(identifier)
+            ?: throw ResponseException(ResponseError.AuthenticationRequired, "Invalid identifier or password.")
+
+        if (!BCrypt.checkpw(password, possibleAccount.passwordHash)) {
+            throw ResponseException(ResponseError.AuthenticationRequired, "Invalid identifier or password.")
+        }
+
+        val jwt = securityService.createJWT(possibleAccount.did)
+        return Session(jwt, jwt, possibleAccount.handle, possibleAccount.did, possibleAccount.email)
     }
 
     /**
