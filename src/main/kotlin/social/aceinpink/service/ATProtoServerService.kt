@@ -15,7 +15,7 @@ import social.aceinpink.util.isValidEmail
 import social.aceinpink.util.isValidHandle
 import java.util.Date
 
-object XRPCService {
+object ATProtoServerService {
 
     private val accountRepository = AccountRepository
     private val securityService = SecurityService
@@ -53,7 +53,7 @@ object XRPCService {
 
         val passwordHash = BCrypt.hashpw(password, BCrypt.gensalt())
 
-        val did = "did@$handle" // TODO: Create new did profile for user
+        val did = "did:plc:$handle" // TODO: Create new did profile for user
         val accountToCreate = Account(email, handle, /* Generate DID */ did, passwordHash)
         val createdAccount = accountRepository.createAccount(accountToCreate)
 

@@ -1,6 +1,6 @@
 package social.aceinpink.exception
 
-import social.aceinpink.service.XRPCService
+import social.aceinpink.service.ATProtoServerService
 
 enum class ResponseError(val defaultMessage: String = "") {
     // -------------------------------------------------------------
@@ -10,35 +10,35 @@ enum class ResponseError(val defaultMessage: String = "") {
     /**
      * The handle given is invalid.
      *
-     * Used in [XRPCService.createAccount]
+     * Used in [ATProtoServerService.createAccount]
      */
     InvalidHandle,
 
     /**
      * The password given is invalid.
      *
-     * Used in [XRPCService.createAccount]
+     * Used in [ATProtoServerService.createAccount]
      */
     InvalidPassword,
 
     /**
      * The invite code given is invalid.
      *
-     * Used in [XRPCService.createAccount]
+     * Used in [ATProtoServerService.createAccount]
      */
     InvalidInviteCode,
 
     /**
      * The handle isn't available for registration.
      *
-     * Used in [XRPCService.createAccount].
+     * Used in [ATProtoServerService.createAccount].
      */
     HandleNotAvailable,
 
     /**
      * The request domain is not supported.
      *
-     * Used in [XRPCService.createAccount]
+     * Used in [ATProtoServerService.createAccount]
      */
     UnsupportedDomain,
 
@@ -46,10 +46,10 @@ enum class ResponseError(val defaultMessage: String = "") {
      * The account being requested was taken down.
      *
      * Used in
-     * [XRPCService.createInviteCode],
-     * [XRPCService.createSession],
-     * [XRPCService.listAppPasswords],
-     * [XRPCService.refreshSession].
+     * [ATProtoServerService.createInviteCode],
+     * [ATProtoServerService.createSession],
+     * [ATProtoServerService.listAppPasswords],
+     * [ATProtoServerService.refreshSession].
      */
     AccountTakedown,
 
@@ -63,21 +63,21 @@ enum class ResponseError(val defaultMessage: String = "") {
     /**
      * The given token has passed its expiry date.
      *
-     * Used in [XRPCService.deleteAccount], [XRPCService.resetPassword].
+     * Used in [ATProtoServerService.deleteAccount], [ATProtoServerService.resetPassword].
      */
     ExpiredToken,
 
     /**
      * The given token is not valid.
      *
-     * Used in [XRPCService.deleteAccount], [XRPCService.resetPassword].
+     * Used in [ATProtoServerService.deleteAccount], [ATProtoServerService.resetPassword].
      */
     InvalidToken,
 
     /**
      * The item was already created(?).
      *
-     * Used in [XRPCService.getAccountInviteCodes].
+     * Used in [ATProtoServerService.getAccountInviteCodes].
      */
     DuplicateCreate,
 

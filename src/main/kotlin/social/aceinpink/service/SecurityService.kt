@@ -2,7 +2,7 @@ package social.aceinpink.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import social.aceinpink.security.JWT_SECRET
+import social.aceinpink.ServerConfig
 import java.util.Date
 
 object SecurityService {
@@ -12,6 +12,6 @@ object SecurityService {
     fun createJWT(identifier: String): String = JWT.create()
         .withSubject(identifier)
         .withExpiresAt(Date(System.currentTimeMillis() + TOKEN_DURATION))
-        .sign(Algorithm.HMAC512(JWT_SECRET.toByteArray()))
+        .sign(Algorithm.HMAC512(ServerConfig.JWT_SECRET.toByteArray()))
 
 }

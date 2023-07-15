@@ -9,7 +9,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.plugins.statuspages.*
-import social.aceinpink.data.configureDb
+import social.aceinpink.ServerConfig.applyConfig
 import social.aceinpink.exception.ResponseError
 import social.aceinpink.exception.ResponseException
 import social.aceinpink.routing.configureRouting
@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureDb()
+    applyConfig()
     install(StatusPages) {
         exception<ResponseException> { call, cause ->
             call.error(cause)
